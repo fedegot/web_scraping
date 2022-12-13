@@ -18,21 +18,27 @@ content = s.page_source
 soup = BeautifulSoup(content, features="html.parser")
 
 for a in soup.find_all('div', attrs={'class':'propertyCard-wrapper'}):
-     area = a.find('address', attrs={'class':'propertyCard-address property-card-updates'})
+     #area = a.find('address', attrs={'class':'propertyCard-address property-card-updates'})
      prices = a.find('div', attrs={'class':'propertyCard-priceValue'})
 
-     area.append(area.text)
-     prices.append(prices.text)
+     #area.append(area.text)
+     prices.append(prices.get_text())
+
+for a in soup.find_all("address", attrs={'class':'propertyCard-address property-card-updates'}):
+          appendo = a.get_text()
+          area.append(appendo)
+                    
           
 for j in soup.find_all("span", attrs={"class":"no-svg-bed-icon bed-icon seperator"}):
      for s in j.select('title'):
-        rooms.append(s.extract())
+        rooms.append(s.get_text())
     
 
 
 print(rooms)
-    
-    
+print(prices)
+print(area)
+
     
 # df = pd.DataFrame({"Area":area}, index=[1])
 # df.to_csv("houses.csv",  encoding="utf-8")
