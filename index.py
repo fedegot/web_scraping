@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 import pandas as pd  
 import bleach
 
-ser = Service("C:/Users/got_a/OneDrive/Documents/chromedriver.exe")
+#ser = Service("C:/Users/got_a/OneDrive/Documents/chromedriver.exe")
+ser = Service("/home/fedegot/Downloads/chromedriver")
 op = webdriver.ChromeOptions()
 s = webdriver.Chrome(service=ser, options=op)
 
@@ -17,12 +18,9 @@ s.get("https://www.rightmove.co.uk/property-for-sale/find.html?searchType=SALE&l
 content = s.page_source
 soup = BeautifulSoup(content, features="html.parser")
 
-for a in soup.find_all('div', attrs={'class':'propertyCard-wrapper'}):
-     #area = a.find('address', attrs={'class':'propertyCard-address property-card-updates'})
-     prices = a.find('div', attrs={'class':'propertyCard-priceValue'})
-
-     #area.append(area.text)
-     prices.append(prices.get_text())
+for a in soup.find_all('div', attrs={'class':'propertyCard-priceValue'}):
+     #prices = a.find('div', attrs={'class':'propertyCard-priceValue'})
+     prices.append(a.get_text())
 
 for a in soup.find_all("address", attrs={'class':'propertyCard-address property-card-updates'}):
           appendo = a.get_text()
