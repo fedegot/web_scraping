@@ -22,8 +22,8 @@ for a in soup.find_all('div', attrs={'class':'propertyCard-priceValue'}):
      prices.append(a.get_text())
 
 for a in soup.find_all("address", attrs={'class':'propertyCard-address property-card-updates'}):
-          appendo = a.get_text()
-          area.append(appendo)
+     appendo = a.get_text()
+     area.append(appendo)
                     
 for j in soup.find_all("span", attrs={"class":"no-svg-bed-icon bed-icon seperator"}):
      for s in j.select('title'):
@@ -39,8 +39,8 @@ print(area)
 print(agent)
 
     
-# df = pd.DataFrame({"Area":area}, index=[1])
-# df.to_csv("houses.csv",  encoding="utf-8")
+df = pd.DataFrame({"Area":area, "Price": prices, "Rooms": rooms, "Agent": agent}, index=[1])
+df.to_csv("houses.csv",  encoding="utf-8")
     
 
 
