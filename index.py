@@ -4,8 +4,7 @@ from bs4 import BeautifulSoup
 import pandas as pd  
 from decouple import config
 
-#ser = Service("C:/Users/got_a/OneDrive/Documents/chromedriver.exe")
-ser = Service("/home/fedegot/Downloads/chromedriver")
+ser = Service(config('DRIVER'))
 op = webdriver.ChromeOptions()
 s = webdriver.Chrome(service=ser, options=op)
 
