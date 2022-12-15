@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
 import pandas as pd  
-import bleach
+from decouple import config
 
 #ser = Service("C:/Users/got_a/OneDrive/Documents/chromedriver.exe")
 ser = Service("/home/fedegot/Downloads/chromedriver")
@@ -12,9 +12,10 @@ s = webdriver.Chrome(service=ser, options=op)
 area = []
 prices = []
 rooms = []
+first_agent = []
 agent = []
 
-s.get("https://www.rightmove.co.uk/property-for-sale/find.html?searchType=SALE&locationIdentifier=REGION%5E1268&insId=1&radius=0.0&minPrice=&maxPrice=&minBedrooms=&maxBedrooms=&displayPropertyType=&maxDaysSinceAdded=&_includeSSTC=on&sortByPriceDescending=&primaryDisplayPropertyType=&secondaryDisplayPropertyType=&oldDisplayPropertyType=&oldPrimaryDisplayPropertyType=&newHome=&auction=false")
+s.get(config('LINK'))
 content = s.page_source
 soup = BeautifulSoup(content, features="html.parser")
 
@@ -29,19 +30,25 @@ for j in soup.find_all("span", attrs={"class":"no-svg-bed-icon bed-icon seperato
      for s in j.select('title'):
         rooms.append(s.get_text())
     
-for a in soup.find_all('div', attrs={'class':'propertyCard-branchLogo'}):
-     team_name = a.find('img')['alt']
-     agent.append(team_name)
 
-print(rooms)
-print(prices)
-print(area)
-print(agent)
+for a in soup.find_all('div', attrs={'class':'propertyCard-branchSummary property-card-updates'}):
+     m = a.contents[1]
+     first_agent.append(m)
+     
+for x in first_agent:
+     mm = x.split()
+     mm.remove("by")        
+     agent.append(' '.join(mm))
+     
+      
 
-    
-df = pd.DataFrame({"Area":area, "Price": prices, "Rooms": rooms, "Agent": agent}, index=[1])
-df.to_csv("houses.csv",  encoding="utf-8")
-    
+print(len(rooms))
+print(len(prices))
+print(len(area))
+print(len(agent))
 
+
+df = pd.DataFrame.from_dict({"Area":area, "Price": prices, "Rooms": rooms, "Agent": agent})
+df.to_csv("houses.csv",index = False, header=True, encoding='utf-8', sep='\t')
 
 
