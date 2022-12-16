@@ -23,6 +23,7 @@ area = []
 for a in soup.find_all("address", attrs={'class':'propertyCard-address property-card-updates'}):
      appendo = a.get_text()
      area.append(appendo)
+     
    
 rooms_bed = []                 
 for a in soup.find_all("span", attrs={"class":"no-svg-bed-icon bed-icon seperator"}):
@@ -46,8 +47,35 @@ for x in first_agent:
      mm.remove("by")        
      agent.append(' '.join(mm))
      
+     
+house_class = []
+for a in soup.find_all('div', attrs={'class':'property-information'}):
+     for hh in soup.find('span', attrs={'class':'text'}):
+          house_class.append(hh)
+          
+          
+          
+pages_scraped = []
+for a in soup.find_all('div', attrs={'class':'select-wrapper pagination-dropdownWrapper'}):
+     for hh in soup.find('select', attrs={'class':'select pagination-dropdown'}):
+          pages_scraped.append(hh.get_text())
+
+number_of_pages = [0] #index pages
+len_pages_scraped = len(pages_scraped) - 1
+for i in range(0, len_pages_scraped):
+     number_of_pages.append(number_of_pages[-1]+24)
+     
+
+
+     
+
+     
+
+     
+
+     
 #load in a dataframe
-df = pd.DataFrame.from_dict({"area":area, "price": prices, "number_bedrooms": number_bedrooms, "agent": agent})
+df = pd.DataFrame.from_dict({"area":area, "price": prices, "number_bedrooms": number_bedrooms,"property_types":house_class, "agent": agent})
 #df.to_csv("houses.csv",index = False, header=True, encoding='utf-8', sep='\t')
 
 

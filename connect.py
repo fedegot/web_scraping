@@ -7,4 +7,4 @@ mydb = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
                                pw=config('PASSSL'),
                                db="mysql"))
 
-df.to_sql('22', con = mydb, if_exists = 'append', chunksize = 1000)
+df.to_sql('ff', con = mydb, if_exists = 'append', chunksize = 1000)
