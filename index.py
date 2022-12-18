@@ -54,23 +54,18 @@ for i in number_of_pages:
           for hh in soup.find('span', attrs={'class':'text'}):
                house_class.append(hh)
                
-     
-     print(len(area))
-     print(len(prices))
-     print(len(number_bedrooms))
-     print(number_bedrooms)
-     print(rooms_bed)
-     print(len(house_class))
-     print(len(agent))
-     
+               
+     #///////////////MAKE THE LIST TO THE SAME NUMBER - NEED A FIX//////////////////
+      
      dict_len = {"area": len(area), "prices": len(prices), "number_bedrooms": len(number_bedrooms), "house_class": len(house_class), "agent": len(agent)}
      max_values = max(dict_len.values())
      
      for key in dict_len:
-              if dict_len[key] != max_values:
-               if key == "number_bedrooms":
-                    len_list_fix2(exec(key)) 
-               else: len_list_fix(exec(key))       
+              if dict_len[key] != max_values and key == "number_bedrooms":
+                    difference = max_values - dict_len.get("number_bedrooms") 
+                    number_bedrooms += [0000] * difference 
+              elif dict_len[key] != max_values: 
+                   len_list_fix(exec(key))       
      
      def len_list_fix(n):
           difference = max_values - dict_len.get(n) 
@@ -78,21 +73,32 @@ for i in number_of_pages:
           
      def len_list_fix2(n):
           difference = max_values - dict_len.get("number_bedrooms") 
-          for x in range(difference):
-               n.append(0000000000)
-          #n += [0000] * difference       #issues here
-                       
+          n += [0000] * difference       #issues here
+     
+     #///////////////////////////////////////////////////////////////////////////////
+     
+                   
+     #TEST
+     print(len(area))
+     print(len(prices))
+     print(len(number_bedrooms))
+     print(number_bedrooms)
+     print(rooms_bed)
+     print(len(house_class))
+     print(len(agent))
 
-     #load in a dataframe
+     #LOAD IN A DATAFRAME
      df = pd.DataFrame.from_dict({"area": area, "price": prices, "number_bedrooms": number_bedrooms, "property_types": house_class, "agent": agent})
      #df.to_csv("houses.csv",index = False, header=True, encoding='utf-8', sep='\t')
      
+     
+     #CONNECT TO DB
      mydb = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
                        .format(user=config('USRNM'),
                                pw=config('PASSSL'),
                                db="mysql"))
      
      
-     df.to_sql('cws', con = mydb, if_exists = 'append', chunksize = 1000)
+     df.to_sql('proprety', con = mydb, if_exists = 'append', chunksize = 1000)
 
 
