@@ -13,35 +13,45 @@ for i in number_of_pages:
      s = webdriver.Chrome(service=ser, options=op)
 
      print(f"{i} pagina")
-     page = s.get(f"https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier=REGION%5E1268&index={i}&propertyTypes=&includeSSTC=false&mustHave=&dontShow=&furnishTypes=&keywords=")
+     page = s.get(f"https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier=REGION%5E1164&index={i}&propertyTypes=&includeSSTC=false&mustHave=&dontShow=&furnishTypes=&keywords=")
      content = s.page_source
      soup = BeautifulSoup(content, features="html.parser")
 
      area = []
      for a in soup.find_all("address", attrs={'class':'propertyCard-address property-card-updates'}):
-          appendo = a.get_text()
+          appendo = a.text if s else "N/A"
           area.append(appendo)      
            
      prices = []
      for a in soup.find_all('div', attrs={'class':'propertyCard-priceValue'}):
-          prices.append(a.get_text())
+          prices.append(a.text if s else "N/A")
           
           
      rooms_bed = []                 
      for a in soup.find_all("span", attrs={"class":"no-svg-bed-icon bed-icon seperator"}):
           for s in a.select('title'):
-                    rooms_bed.append(s.get_text())
+                    rooms_bed.append(s.text if s else 00)
                
      number_bedrooms = []
      for x in rooms_bed:
           if "bedrooms" in x:
                number_bedrooms.append(int(x.replace('bedrooms', '')))
+          elif "bedroom" in x:
+               number_bedrooms.append(int(x.replace("bedroom", "")))
+          else:  number_bedrooms.append(int(x))
 
      first_agent = []
      agent = []
      for a in soup.find_all('div', attrs={'class':'propertyCard-branchSummary property-card-updates'}):
           m = a.contents[1]
           first_agent.append(m)
+          
+          
+     ID_w = []
+     for a in soup.find_all('div', attrs={'class':'l-searchResult is-list'}):
+          a.find("div")
+          ID_w.append(int(a['id'][9:]))
+               
           
      for x in first_agent:
           mm = x.split()
@@ -79,6 +89,7 @@ for i in number_of_pages:
      
                    
      #TEST
+     print(ID_w)
      print(len(area))
      print(len(prices))
      print(len(number_bedrooms))
@@ -88,7 +99,7 @@ for i in number_of_pages:
      print(len(agent))
 
      #LOAD IN A DATAFRAME
-     df = pd.DataFrame.from_dict({"area": area, "price": prices, "number_bedrooms": number_bedrooms, "property_types": house_class, "agent": agent})
+     df = pd.DataFrame.from_dict({"IDD2": ID_w , "area": area, "price": prices, "number_bedrooms": number_bedrooms, "property_types": house_class, "agent": agent})
      #df.to_csv("houses.csv",index = False, header=True, encoding='utf-8', sep='\t')
      
      
@@ -99,6 +110,6 @@ for i in number_of_pages:
                                db="mysql"))
      
      
-     df.to_sql('proprety', con = mydb, if_exists = 'append', chunksize = 1000)
+     df.to_sql('salford2', con = mydb, if_exists = 'append', chunksize = 1000)
 
 
