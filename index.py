@@ -27,21 +27,23 @@ for i in number_of_pages:
           prices.append(a.text if s else "N/A")
           
           
-     rooms_bed = []                 
-     for a in soup.find_all("span", attrs={"class":"no-svg-bed-icon bed-icon seperator"}):
-          for s in a.select('title'):
-               try:
-                    rooms_bed.append(s.text)
-               except:
-                    rooms_bed.append(00)
+     rooms_bed = []            
+     for l in soup.find_all("div", attrs={"class": "property-information"}):
+          try:
+               for a in l.find("span", attrs={"class":"no-svg-bed-icon bed-icon seperator"}):
+                    for s in a.select('title'):
+                         rooms_bed.append(s.text)
+          except:
+               rooms_bed.append("0")
+                   
                          
      number_bedrooms = []
      for x in rooms_bed:
           if "bedrooms" in x:
-               number_bedrooms.append(x.replace('bedrooms', ''))
+               number_bedrooms.append(int(x.replace('bedrooms', '')))
           elif "bedroom" in x:
-               number_bedrooms.append(x.replace("bedroom", ""))
-          else:  number_bedrooms.append(00)
+               number_bedrooms.append(int(x.replace("bedroom", "")))
+          else:  number_bedrooms.append(0)
 
      first_agent = []
      agent = []
@@ -101,6 +103,8 @@ for i in number_of_pages:
      print(len(number_bedrooms))
      print(len(house_class))
      print(len(agent))
+     print(rooms_bed)
+     print(number_bedrooms)
 
 
      #LOAD IN A DATAFRAME
@@ -115,6 +119,6 @@ for i in number_of_pages:
                                db="mysql"))
      
      
-     df.to_sql('salford22', con = mydb, if_exists = 'append', chunksize = 1000)
+     df.to_sql('salford2s2', con = mydb, if_exists = 'append', chunksize = 1000)
 
 
