@@ -13,7 +13,7 @@ for i in number_of_pages:
      s = webdriver.Chrome(service=ser, options=op)
 
      print(f"{i} pagina")
-     page = s.get(f"https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier=REGION%5E1164&index={i}&propertyTypes=&includeSSTC=false&mustHave=&dontShow=&furnishTypes=&keywords=")
+     s.get(f"https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier=REGION%5E1164&index={i}&propertyTypes=&includeSSTC=false&mustHave=&dontShow=&furnishTypes=&keywords=")
      content = s.page_source
      soup = BeautifulSoup(content, features="html.parser")
 
@@ -30,15 +30,18 @@ for i in number_of_pages:
      rooms_bed = []                 
      for a in soup.find_all("span", attrs={"class":"no-svg-bed-icon bed-icon seperator"}):
           for s in a.select('title'):
-                    rooms_bed.append(s.text if s else 00)
-               
+               try:
+                    rooms_bed.append(s.text)
+               except:
+                    rooms_bed.append(00)
+                         
      number_bedrooms = []
      for x in rooms_bed:
           if "bedrooms" in x:
-               number_bedrooms.append(int(x.replace('bedrooms', '')))
+               number_bedrooms.append(x.replace('bedrooms', ''))
           elif "bedroom" in x:
-               number_bedrooms.append(int(x.replace("bedroom", "")))
-          else:  number_bedrooms.append(int(x))
+               number_bedrooms.append(x.replace("bedroom", ""))
+          else:  number_bedrooms.append(00)
 
      first_agent = []
      agent = []
@@ -50,7 +53,7 @@ for i in number_of_pages:
      ID_w = []
      for a in soup.find_all('div', attrs={'class':'l-searchResult is-list'}):
           a.find("div")
-          ID_w.append(int(a['id'][9:]))
+          ID_w.append(a['id'][7:])
                
           
      for x in first_agent:
@@ -66,37 +69,39 @@ for i in number_of_pages:
                
                
      #///////////////MAKE THE LIST TO THE SAME NUMBER - NEED A FIX//////////////////
-      
-     dict_len = {"area": len(area), "prices": len(prices), "number_bedrooms": len(number_bedrooms), "house_class": len(house_class), "agent": len(agent)}
-     max_values = max(dict_len.values())
-     
-     for key in dict_len:
-              if dict_len[key] != max_values and key == "number_bedrooms":
-                    difference = max_values - dict_len.get("number_bedrooms") 
-                    number_bedrooms += [0000] * difference 
-              elif dict_len[key] != max_values: 
-                   len_list_fix(exec(key))       
-     
-     def len_list_fix(n):
-          difference = max_values - dict_len.get(n) 
-          n += difference * ["NaN"]
+ 
+ 
+#     def len_list_fix(n):
+#          difference = max_values - dict_len.get(n) 
+#          n += difference * "NaN"
           
-     def len_list_fix2(n):
-          difference = max_values - dict_len.get("number_bedrooms") 
-          n += [0000] * difference       #issues here
+#     def len_list_fix2(n):
+#          difference = max_values - dict_len.get("number_bedrooms") 
+#          n += difference * 0000    #issues here
+          
+               
+#     dict_len = {"area": len(area), "prices": len(prices), "number_bedrooms": len(number_bedrooms), "house_class": len(house_class), "agent": len(agent)}
+#     max_values = max(dict_len.values())
+     
+#     for key in dict_len:
+#              if dict_len[key] != max_values and key == "number_bedrooms":
+#                    len_list_fix2(exec(key))
+#              elif dict_len[key] != max_values: 
+#                   len_list_fix(exec(key))       
+     
+
      
      #///////////////////////////////////////////////////////////////////////////////
      
                    
      #TEST
-     print(ID_w)
+     
      print(len(area))
      print(len(prices))
      print(len(number_bedrooms))
-     print(number_bedrooms)
-     print(rooms_bed)
      print(len(house_class))
      print(len(agent))
+
 
      #LOAD IN A DATAFRAME
      df = pd.DataFrame.from_dict({"IDD2": ID_w , "area": area, "price": prices, "number_bedrooms": number_bedrooms, "property_types": house_class, "agent": agent})
@@ -110,6 +115,6 @@ for i in number_of_pages:
                                db="mysql"))
      
      
-     df.to_sql('salford2', con = mydb, if_exists = 'append', chunksize = 1000)
+     df.to_sql('salford22', con = mydb, if_exists = 'append', chunksize = 1000)
 
 
